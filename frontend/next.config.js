@@ -11,35 +11,8 @@ const nextConfig = {
     NEXT_PUBLIC_ELEVATION_ASSET: process.env.NEXT_PUBLIC_ELEVATION_ASSET,
     NEXT_PUBLIC_USE_MOCK_DATA: process.env.NEXT_PUBLIC_USE_MOCK_DATA,
   },
-  async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: 'https://coastal-flood-viewer-api.workers.dev/api/:path*',
-      },
-    ];
-  },
-  async headers() {
-    return [
-      {
-        source: '/(.*)',
-        headers: [
-          {
-            key: 'X-Frame-Options',
-            value: 'DENY',
-          },
-          {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
-          },
-          {
-            key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin',
-          },
-        ],
-      },
-    ];
-  },
+  // Note: rewrites and headers are not supported with static export
+  // These will be handled by Cloudflare Pages configuration instead
 };
 
 module.exports = nextConfig;

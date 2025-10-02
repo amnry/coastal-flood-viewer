@@ -1,0 +1,8 @@
+# Cloudflare Pages Redirects Configuration
+# This file handles API rewrites for static export
+
+# API rewrites to Cloudflare Worker
+/api/* https://coastal-flood-viewer-api.workers.dev/api/:splat 200
+
+# Fallback for SPA routing (if needed)
+/* /index.html 200
