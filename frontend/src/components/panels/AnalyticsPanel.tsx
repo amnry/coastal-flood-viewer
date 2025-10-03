@@ -24,6 +24,18 @@ export default function AnalyticsPanel() {
       },
       tooltip: {
         trigger: 'axis',
+        position: function (point: [number, number], params: any, dom: HTMLElement, rect: any, size: any) {
+          // Get the SLA value to determine position
+          const slaValue = params[0]?.value || 0;
+          const offset = 10; // Distance from cursor
+          
+          // Position above cursor if SLA is positive, below if negative
+          if (slaValue >= 0) {
+            return [point[0], point[1] - offset];
+          } else {
+            return [point[0], point[1] + offset];
+          }
+        },
         formatter: (params: { axisValue: string; seriesName: string; value: number }[]) => {
           const data = params[0];
           return `${data.axisValue}<br/>${data.seriesName}: ${data.value} mm`;
@@ -98,7 +110,7 @@ export default function AnalyticsPanel() {
     );
   }
 
-  const { elevation, seaLevel, stats } = clickedPoint;
+  const { elevation, seaLevel, stats, address } = clickedPoint;
 
   return (
     <div className="p-6 space-y-6">
@@ -106,6 +118,21 @@ export default function AnalyticsPanel() {
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
           Location Analytics
         </h3>
+        
+        {/* Address Information */}
+        {address && (
+          <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg mb-6 border border-blue-200 dark:border-blue-800">
+            <div className="text-sm text-blue-600 dark:text-blue-400 font-medium mb-2">📍 Selected Location</div>
+            <div className="text-sm text-gray-700 dark:text-gray-300 mb-1">
+              <strong>Address:</strong> {address.formatted}
+            </div>
+            {(address.city || address.state || address.country) && (
+              <div className="text-xs text-gray-500 dark:text-gray-400">
+                {[address.city, address.state, address.country].filter(Boolean).join(', ')}
+              </div>
+            )}
+          </div>
+        )}
         
         <div className="grid grid-cols-2 gap-4 mb-6">
           <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">

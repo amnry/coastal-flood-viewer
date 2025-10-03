@@ -36,4 +36,10 @@ export interface MapClickData {
   seaLevel?: number;
   timeSeries?: TimeSeries;
   stats?: AnalyticsStats;
+  address?: {
+    formatted: string;
+    city?: string;
+    state?: string;
+    country?: string;
+  };
 }

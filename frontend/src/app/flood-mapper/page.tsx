@@ -16,8 +16,16 @@ const TileLayerFlood = dynamic(() => import('@/components/map/layers/TileLayerFl
   ssr: false
 });
 
+const TileLayerDEM = dynamic(() => import('@/components/map/layers/TileLayerDEM'), {
+  ssr: false
+});
+
+const TileLayerFloodDEM = dynamic(() => import('@/components/map/layers/TileLayerFloodDEM'), {
+  ssr: false
+});
+
 export default function FloodMapperPage() {
-  const { sidebarOpen, setSidebarOpen, activeLayers, toggleLayer } = useAppStore();
+  const { sidebarOpen, setSidebarOpen, activeLayers, toggleLayer, scenarioMeters } = useAppStore();
   const [selectedTab, setSelectedTab] = useState<'controls' | 'analytics'>('controls');
 
   return (
@@ -119,12 +127,16 @@ export default function FloodMapperPage() {
                     </h3>
                     <div className="space-y-3">
                       <div className="flex items-center">
-                        <div className="w-4 h-4 bg-blue-200 dark:bg-blue-800 rounded mr-2"></div>
-                        <span className="text-sm text-gray-700 dark:text-gray-300">Elevation (m)</span>
+                        <div className="w-4 h-4 bg-gradient-to-r from-green-200 to-brown-200 dark:from-green-800 dark:to-brown-800 rounded mr-2"></div>
+                        <span className="text-sm text-gray-700 dark:text-gray-300">Coastal DEM Elevation</span>
                       </div>
                       <div className="flex items-center">
-                        <div className="w-4 h-4 bg-red-200 dark:bg-red-800 rounded mr-2"></div>
-                        <span className="text-sm text-gray-700 dark:text-gray-300">Flood Depth (m)</span>
+                        <div className="w-4 h-4 bg-red-500 dark:bg-red-600 rounded mr-2"></div>
+                        <span className="text-sm text-gray-700 dark:text-gray-300">Flooded Areas (DEM + SLR)</span>
+                      </div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                        <p>• Red areas show regions below current sea level + {scenarioMeters}m</p>
+                        <p>• Based on Google Earth Engine Coastal DEM</p>
                       </div>
                     </div>
                   </div>
@@ -139,7 +151,8 @@ export default function FloodMapperPage() {
         {/* Main Map Area */}
         <div className="flex-1 relative">
           <InteractiveMap center={[40.7128, -74.0060]} zoom={8}>
-            <TileLayerFlood />
+            <TileLayerDEM />
+            <TileLayerFloodDEM />
           </InteractiveMap>
         </div>
       </div>

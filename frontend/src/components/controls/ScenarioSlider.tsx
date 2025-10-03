@@ -14,7 +14,7 @@ export default function ScenarioSlider() {
         <input
           type="range"
           min="0"
-          max="2"
+          max="5"
           step="0.1"
           value={scenarioMeters}
           onChange={(e) => setScenarioMeters(Number(e.target.value))}
@@ -24,6 +24,9 @@ export default function ScenarioSlider() {
           <span>0m</span>
           <span>1m</span>
           <span>2m</span>
+          <span>3m</span>
+          <span>4m</span>
+          <span>5m</span>
         </div>
       </div>
 

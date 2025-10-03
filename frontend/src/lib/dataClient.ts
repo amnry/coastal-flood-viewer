@@ -74,12 +74,23 @@ export class DataClient {
     return response.json();
   }
   
-  buildTileUrl(layer: string, z: string, x: string, y: string): string {
+  buildTileUrl(layer: string, z: string, x: string, y: string, params?: Record<string, any>): string {
     if (USE_MOCK_DATA) {
       return `/mock/tiles/${layer}/${z}/${x}/${y}.png`;
     }
     
-    return `${TILES_BASE_URL}/tiles/${layer}/${z}/${x}/${y}.png`;
+    let url = `${TILES_BASE_URL}/tiles/${layer}/${z}/${x}/${y}.png`;
+    
+    // Add query parameters for dynamic layers
+    if (params) {
+      const queryParams = new URLSearchParams();
+      Object.entries(params).forEach(([key, value]) => {
+        queryParams.append(key, value.toString());
+      });
+      url += `?${queryParams.toString()}`;
+    }
+    
+    return url;
   }
   
   buildCOGUrl(layer: string, filename: string): string {
@@ -88,6 +99,50 @@ export class DataClient {
     }
     
     return `${TILES_BASE_URL}/cogs/${layer}/${filename}`;
+  }
+
+  async reverseGeocode(lat: number, lon: number): Promise<{ formatted: string; city?: string; state?: string; country?: string }> {
+    // Always use real geocoding for address data, even in mock mode
+    // This ensures users see actual location information
+
+    try {
+      // Use OpenStreetMap Nominatim API for reverse geocoding
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`,
+        {
+          headers: {
+            'User-Agent': 'CoastalFloodViewer/1.0'
+          }
+        }
+      );
+      
+      if (!response.ok) {
+        throw new Error(`Reverse geocoding failed: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data.error) {
+        throw new Error(data.error);
+      }
+      
+      const address = data.address || {};
+      
+      return {
+        formatted: data.display_name || `${lat.toFixed(4)}, ${lon.toFixed(4)}`,
+        city: address.city || address.town || address.village || address.hamlet,
+        state: address.state,
+        country: address.country
+      };
+    } catch (error) {
+      console.error('Reverse geocoding error:', error);
+      return {
+        formatted: `${lat.toFixed(4)}, ${lon.toFixed(4)}`,
+        city: 'Unknown',
+        state: 'Unknown',
+        country: 'Unknown'
+      };
+    }
   }
 }
 

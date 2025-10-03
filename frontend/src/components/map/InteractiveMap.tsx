@@ -1,10 +1,12 @@
 'use client';
 
 import { useEffect } from 'react';
-import { MapContainer, TileLayer, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, useMap, ZoomControl } from 'react-leaflet';
 import { LatLngTuple } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useAppStore } from '@/store/useAppStore';
+import { dataClient } from '@/lib/dataClient';
+import SelectedLocationMarker from './SelectedLocationMarker';
 
 interface InteractiveMapProps {
   children?: React.ReactNode;
@@ -30,12 +32,16 @@ const MapEventHandler = () => {
       // Get mock time series
       const timeSeries = await getMockTimeSeries(lat, lng);
       
+      // Get address information
+      const address = await dataClient.reverseGeocode(lat, lng);
+      
       setClickedPoint({
         lat,
         lon: lng,
         elevation,
         seaLevel,
         timeSeries,
+        address,
         stats: {
           mean: timeSeries.data.reduce((sum, point) => sum + point.value, 0) / timeSeries.data.length,
           median: timeSeries.data.sort((a, b) => a.value - b.value)[Math.floor(timeSeries.data.length / 2)].value,
@@ -70,12 +76,15 @@ export default function InteractiveMap({
         zoom={zoom}
         style={{ height: '100%', width: '100%' }}
         className="z-0"
+        zoomControl={false}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
+        <ZoomControl position="topright" />
         <MapEventHandler />
+        <SelectedLocationMarker />
         {children}
       </MapContainer>
     </div>

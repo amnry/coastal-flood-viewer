@@ -17,6 +17,10 @@ const TileLayerSLA = dynamic(() => import('@/components/map/layers/TileLayerSLA'
   ssr: false
 });
 
+const TileLayerDEM = dynamic(() => import('@/components/map/layers/TileLayerDEM'), {
+  ssr: false
+});
+
 export default function ExplorerPage() {
   const { sidebarOpen, setSidebarOpen, activeLayers, toggleLayer } = useAppStore();
   const [selectedTab, setSelectedTab] = useState<'controls' | 'analytics'>('controls');
@@ -125,6 +129,7 @@ export default function ExplorerPage() {
         <div className="flex-1 relative">
           <InteractiveMap center={[40.7128, -74.0060]} zoom={8}>
             <TileLayerSLA />
+            <TileLayerDEM />
           </InteractiveMap>
         </div>
       </div>
