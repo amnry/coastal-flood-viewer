@@ -1,6 +1,7 @@
 'use client';
 
 import { useAppStore } from '@/store/useAppStore';
+import StormNameSearch from './StormNameSearch';
 
 const BASINS = [
   { value: 'NA', label: 'North Atlantic' },
@@ -24,7 +25,8 @@ export default function StormFilters() {
   const { 
     stormFilters, 
     setStormFilter, 
-    clearStormFilters 
+    clearStormFilters,
+    availableYears 
   } = useAppStore();
 
   return (
@@ -45,28 +47,25 @@ export default function StormFilters() {
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Storm Name
         </label>
-        <input
-          type="text"
-          value={stormFilters.name}
-          onChange={(e) => setStormFilter('name', e.target.value)}
-          placeholder="Search by name..."
-          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-        />
+        <StormNameSearch />
       </div>
 
       <div>
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Year
         </label>
-        <input
-          type="number"
+        <select
           value={stormFilters.year || ''}
           onChange={(e) => setStormFilter('year', e.target.value ? Number(e.target.value) : null)}
-          placeholder="Filter by year..."
-          min="1851"
-          max="2023"
           className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-        />
+        >
+          <option value="">All Years</option>
+          {availableYears.map(year => (
+            <option key={year} value={year}>
+              {year}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div>

@@ -1,0 +1,95 @@
+/* Custom styles for enhanced storm visualization */
+
+.forecast-zone {
+  transition: opacity 0.2s ease-in-out;
+}
+
+.forecast-zone:hover {
+  opacity: 0.3 !important;
+}
+
+.storm-track {
+  stroke-dasharray: 5, 5;
+  animation: dash 2s linear infinite;
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -10;
+  }
+}
+
+.storm-symbol-marker {
+  transition: transform 0.2s ease-in-out;
+}
+
+.storm-symbol-marker:hover {
+  transform: scale(1.2);
+}
+
+.custom-tooltip {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+  font-size: 12px !important;
+  padding: 8px 12px !important;
+}
+
+.custom-tooltip::before {
+  border-top-color: #e5e7eb !important;
+}
+
+/* Dark mode support for tooltips */
+.dark .custom-tooltip {
+  background: rgba(31, 41, 55, 0.95) !important;
+  border-color: #374151 !important;
+  color: #f9fafb !important;
+}
+
+.dark .custom-tooltip::before {
+  border-top-color: #374151 !important;
+}
+
+/* Storm popup styles */
+.storm-popup,
+.storm-track-popup {
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.storm-popup h3,
+.storm-track-popup h3 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.storm-popup p,
+.storm-track-popup p {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.storm-popup strong,
+.storm-track-popup strong {
+  color: #374151;
+  font-weight: 600;
+}
+
+/* Dark mode for popups */
+.dark .storm-popup h3,
+.dark .storm-track-popup h3 {
+  color: #f9fafb;
+}
+
+.dark .storm-popup p,
+.dark .storm-track-popup p {
+  color: #9ca3af;
+}
+
+.dark .storm-popup strong,
+.dark .storm-track-popup strong {
+  color: #d1d5db;
+}

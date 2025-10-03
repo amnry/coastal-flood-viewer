@@ -6,10 +6,17 @@ import L from 'leaflet';
 import { useAppStore } from '@/store/useAppStore';
 import { dataClient } from '@/lib/dataClient';
 import { StormCollection } from '@/types/storm';
+import { extractUniqueStormNames, extractUniqueYears } from '@/lib/stormUtils';
 
 export default function VectorStorms() {
   const map = useMap();
-  const { activeLayers, stormFilters, setSelectedStorm } = useAppStore();
+  const { 
+    activeLayers, 
+    stormFilters, 
+    setSelectedStorm,
+    setAvailableStormNames,
+    setAvailableYears 
+  } = useAppStore();
   const [stormData, setStormData] = useState<StormCollection | null>(null);
 
   useEffect(() => {
@@ -17,13 +24,19 @@ export default function VectorStorms() {
       try {
         const data = await dataClient.getHurricaneData();
         setStormData(data);
+        
+        // Extract and store available names and years
+        const names = extractUniqueStormNames(data);
+        const years = extractUniqueYears(data);
+        setAvailableStormNames(names);
+        setAvailableYears(years);
       } catch (error) {
         console.error('Failed to load storm data:', error);
       }
     };
 
     loadStormData();
-  }, []);
+  }, [setAvailableStormNames, setAvailableYears]);
 
   useEffect(() => {
     if (!activeLayers.storms || !stormData) return;

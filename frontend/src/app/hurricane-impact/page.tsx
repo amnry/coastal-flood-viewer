@@ -3,8 +3,10 @@
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import StormFilters from '@/components/controls/StormFilters';
+import ForecastLegend from '@/components/controls/ForecastLegend';
 import AnalyticsPanel from '@/components/panels/AnalyticsPanel';
 import { useAppStore } from '@/store/useAppStore';
+import '@/styles/storm-visualization.css';
 
 // Dynamically import map components to avoid SSR issues
 const InteractiveMap = dynamic(() => import('@/components/map/InteractiveMap'), {
@@ -12,7 +14,7 @@ const InteractiveMap = dynamic(() => import('@/components/map/InteractiveMap'), 
   loading: () => <div className="h-full w-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">Loading map...</div>
 });
 
-const VectorStorms = dynamic(() => import('@/components/map/layers/VectorStorms'), {
+const EnhancedStormVisualization = dynamic(() => import('@/components/map/layers/EnhancedStormVisualization'), {
   ssr: false
 });
 
@@ -113,7 +115,10 @@ export default function HurricaneImpactPage() {
 
                   <StormFilters />
 
-                  {/* Legend */}
+                  {/* Forecast Legend */}
+                  <ForecastLegend />
+
+                  {/* Storm Categories Legend */}
                   <div>
                     <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
                       Storm Categories
@@ -194,7 +199,7 @@ export default function HurricaneImpactPage() {
         {/* Main Map Area */}
         <div className="flex-1 relative">
           <InteractiveMap center={[25.0, -80.0]} zoom={6}>
-            <VectorStorms />
+            <EnhancedStormVisualization />
           </InteractiveMap>
         </div>
       </div>

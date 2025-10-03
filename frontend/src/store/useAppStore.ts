@@ -32,6 +32,12 @@ interface AppState {
   setStormFilter: (filter: keyof AppState['stormFilters'], value: string | number | null) => void;
   clearStormFilters: () => void;
   
+  // Storm metadata
+  availableStormNames: string[];
+  availableYears: number[];
+  setAvailableStormNames: (names: string[]) => void;
+  setAvailableYears: (years: number[]) => void;
+  
   // Map interaction
   clickedPoint: MapClickData | null;
   setClickedPoint: (point: MapClickData | null) => void;
@@ -94,6 +100,12 @@ export const useAppStore = create<AppState>((set) => ({
       basin: null,
     },
   }),
+  
+  // Storm metadata
+  availableStormNames: [],
+  availableYears: [],
+  setAvailableStormNames: (names) => set({ availableStormNames: names }),
+  setAvailableYears: (years) => set({ availableYears: years }),
   
   // Map interaction
   clickedPoint: null,
