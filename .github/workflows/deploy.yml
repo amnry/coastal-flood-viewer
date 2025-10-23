@@ -1,0 +1,67 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build Next.js App
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+          
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+        
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: npm ci
+        
+      - name: Build with Next.js
+        working-directory: ./frontend
+        run: npm run build
+        env:
+          NEXT_PUBLIC_TILES_BASE_URL: https://storage.googleapis.com/coastal-flood-viewer-tiles
+          NEXT_PUBLIC_DATA_CATALOG_URL: https://storage.googleapis.com/coastal-flood-viewer-tiles/catalog/catalog.json
+          NEXT_PUBLIC_ELEVATION_ASSET: users/amanaryya1/coastal-dem-files
+          NEXT_PUBLIC_USE_MOCK_DATA: true
+          
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./frontend/out
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+      
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
