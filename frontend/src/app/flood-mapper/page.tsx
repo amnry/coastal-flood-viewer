@@ -12,9 +12,9 @@ const InteractiveMap = dynamic(() => import('@/components/map/InteractiveMap'), 
   loading: () => <div className="h-full w-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">Loading map...</div>
 });
 
-const TileLayerFlood = dynamic(() => import('@/components/map/layers/TileLayerFlood'), {
-  ssr: false
-});
+// const TileLayerFlood = dynamic(() => import('@/components/map/layers/TileLayerFlood'), {
+//   ssr: false
+// });
 
 const TileLayerDEM = dynamic(() => import('@/components/map/layers/TileLayerDEM'), {
   ssr: false

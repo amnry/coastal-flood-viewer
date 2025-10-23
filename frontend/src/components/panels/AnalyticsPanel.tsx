@@ -24,9 +24,11 @@ export default function AnalyticsPanel() {
       },
       tooltip: {
         trigger: 'axis',
-        position: function (point: [number, number], params: any, dom: HTMLElement, rect: any, size: any) {
+        position: function (point: [number, number], params: unknown, _dom: HTMLElement, _rect: unknown, _size: unknown) {
           // Get the SLA value to determine position
-          const slaValue = params[0]?.value || 0;
+          const slaValue = Array.isArray(params) && params[0] && typeof params[0] === 'object' && 'value' in params[0] 
+            ? (params[0] as { value: number }).value 
+            : 0;
           const offset = 10; // Distance from cursor
           
           // Position above cursor if SLA is positive, below if negative

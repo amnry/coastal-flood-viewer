@@ -74,7 +74,7 @@ export class DataClient {
     return response.json();
   }
   
-  buildTileUrl(layer: string, z: string, x: string, y: string, params?: Record<string, any>): string {
+  buildTileUrl(layer: string, z: string, x: string, y: string, params?: Record<string, string | number>): string {
     if (USE_MOCK_DATA) {
       return `/mock/tiles/${layer}/${z}/${x}/${y}.png`;
     }
@@ -105,6 +105,10 @@ export class DataClient {
     // Always use real geocoding for address data, even in mock mode
     // This ensures users see actual location information
 
+    // First try with a timeout to prevent hanging requests
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+
     try {
       // Use OpenStreetMap Nominatim API for reverse geocoding
       const response = await fetch(
@@ -112,9 +116,13 @@ export class DataClient {
         {
           headers: {
             'User-Agent': 'CoastalFloodViewer/1.0'
-          }
+          },
+          signal: controller.signal,
+          mode: 'cors'
         }
       );
+      
+      clearTimeout(timeoutId);
       
       if (!response.ok) {
         throw new Error(`Reverse geocoding failed: ${response.statusText}`);
@@ -135,14 +143,42 @@ export class DataClient {
         country: address.country
       };
     } catch (error) {
-      console.error('Reverse geocoding error:', error);
-      return {
-        formatted: `${lat.toFixed(4)}, ${lon.toFixed(4)}`,
-        city: 'Unknown',
-        state: 'Unknown',
-        country: 'Unknown'
-      };
+      clearTimeout(timeoutId);
+      
+      // Log the error for debugging but don't expose sensitive details
+      console.warn('Reverse geocoding failed, using coordinates:', error instanceof Error ? error.message : 'Unknown error');
+      
+      // Return a more user-friendly fallback
+      return this.getFallbackLocation(lat, lon);
     }
+  }
+
+  private getFallbackLocation(lat: number, lon: number): { formatted: string; city?: string; state?: string; country?: string } {
+    // Provide a more descriptive fallback based on coordinates
+    const latStr = lat.toFixed(4);
+    const lonStr = lon.toFixed(4);
+    
+    // Basic geographic region detection
+    let region = 'Unknown Region';
+    let country = 'Unknown';
+    
+    if (lat >= 24 && lat <= 49 && lon >= -125 && lon <= -66) {
+      region = 'North America';
+      country = 'United States';
+    } else if (lat >= 25 && lat <= 71 && lon >= -173 && lon <= -52) {
+      region = 'North America';
+      country = 'Canada';
+    } else if (lat >= 18 && lat <= 32 && lon >= -118 && lon <= -86) {
+      region = 'North America';
+      country = 'Mexico';
+    }
+    
+    return {
+      formatted: `${latStr}, ${lonStr}`,
+      city: region,
+      state: region,
+      country: country
+    };
   }
 }
 

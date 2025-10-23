@@ -111,3 +111,7 @@ export function getProbabilityColor(probability: number): string {
   if (probability >= 10) return '#00FF00'; // Green
   return '#008000'; // Dark green for <10%
 }
+
+
+
+

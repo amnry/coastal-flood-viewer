@@ -23,34 +23,72 @@ const MapEventHandler = () => {
     const handleClick = async (e: L.LeafletMouseEvent) => {
       const { lat, lng } = e.latlng;
       
-      // Generate mock elevation (simplified)
-      const elevation = Math.random() * 10; // 0-10m elevation
-      
-      // Generate mock sea level
-      const seaLevel = Math.random() * 100 - 50; // -50 to +50mm
-      
-      // Get mock time series
-      const timeSeries = await getMockTimeSeries(lat, lng);
-      
-      // Get address information
-      const address = await dataClient.reverseGeocode(lat, lng);
-      
-      setClickedPoint({
-        lat,
-        lon: lng,
-        elevation,
-        seaLevel,
-        timeSeries,
-        address,
-        stats: {
-          mean: timeSeries.data.reduce((sum, point) => sum + point.value, 0) / timeSeries.data.length,
-          median: timeSeries.data.sort((a, b) => a.value - b.value)[Math.floor(timeSeries.data.length / 2)].value,
-          min: Math.min(...timeSeries.data.map(p => p.value)),
-          max: Math.max(...timeSeries.data.map(p => p.value)),
-          trend: 2.1, // mm/year
-          recentChange: 8.5, // mm over last 5 years
-        },
-      });
+      try {
+        // Generate mock elevation (simplified)
+        const elevation = Math.random() * 10; // 0-10m elevation
+        
+        // Generate mock sea level
+        const seaLevel = Math.random() * 100 - 50; // -50 to +50mm
+        
+        // Get mock time series
+        const timeSeries = await getMockTimeSeries(lat, lng);
+        
+        // Get address information with error handling
+        let address;
+        try {
+          address = await dataClient.reverseGeocode(lat, lng);
+        } catch (geocodeError) {
+          console.warn('Geocoding failed, using fallback:', geocodeError);
+          // Use fallback address information
+          address = {
+            formatted: `${lat.toFixed(4)}, ${lng.toFixed(4)}`,
+            city: 'Unknown Location',
+            state: 'Unknown Region',
+            country: 'Unknown Country'
+          };
+        }
+        
+        setClickedPoint({
+          lat,
+          lon: lng,
+          elevation,
+          seaLevel,
+          timeSeries,
+          address,
+          stats: {
+            mean: timeSeries.data.reduce((sum, point) => sum + point.value, 0) / timeSeries.data.length,
+            median: timeSeries.data.sort((a, b) => a.value - b.value)[Math.floor(timeSeries.data.length / 2)].value,
+            min: Math.min(...timeSeries.data.map(p => p.value)),
+            max: Math.max(...timeSeries.data.map(p => p.value)),
+            trend: 2.1, // mm/year
+            recentChange: 8.5, // mm over last 5 years
+          },
+        });
+      } catch (error) {
+        console.error('Error processing map click:', error);
+        // Still set basic point data even if other operations fail
+        setClickedPoint({
+          lat,
+          lon: lng,
+          elevation: 0,
+          seaLevel: 0,
+          timeSeries: { data: [], unit: 'mm', variable: 'Sea Level Anomaly', location: { lat, lon: lng } },
+          address: {
+            formatted: `${lat.toFixed(4)}, ${lng.toFixed(4)}`,
+            city: 'Error Loading Data',
+            state: 'Please try again',
+            country: 'Unknown'
+          },
+          stats: {
+            mean: 0,
+            median: 0,
+            min: 0,
+            max: 0,
+            trend: 0,
+            recentChange: 0,
+          },
+        });
+      }
     };
 
     map.on('click', handleClick);

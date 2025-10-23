@@ -9,9 +9,9 @@ import { StormCollection } from '@/types/storm';
 import { extractUniqueStormNames, extractUniqueYears } from '@/lib/stormUtils';
 import { 
   generateForecastCone, 
-  getStormSymbol, 
-  getProbabilityColor,
-  WindProbabilityZone 
+  getStormSymbol
+  // getProbabilityColor,
+  // WindProbabilityZone 
 } from '@/lib/forecastUtils';
 
 export default function EnhancedStormVisualization() {
@@ -65,7 +65,7 @@ export default function EnhancedStormVisualization() {
       const forecastZones = generateForecastCone(storm);
       
       // Create probability zone polygons
-      forecastZones.forEach((zone, index) => {
+      forecastZones.forEach((zone) => {
         const polygon = L.polygon(zone.coordinates, {
           color: zone.color,
           weight: 1,
@@ -231,3 +231,7 @@ function getBasinLabel(basin: string): string {
     default: return basin;
   }
 }
+
+
+
+
