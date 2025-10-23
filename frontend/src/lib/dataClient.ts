@@ -5,6 +5,7 @@ import { StormCollection } from '@/types/storm';
 const TILES_BASE_URL = process.env.NEXT_PUBLIC_TILES_BASE_URL || '';
 const CATALOG_URL = process.env.NEXT_PUBLIC_DATA_CATALOG_URL || '';
 const USE_MOCK_DATA = process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true';
+const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:5001';
 
 export class DataClient {
   private static instance: DataClient;
@@ -79,7 +80,8 @@ export class DataClient {
       return `/mock/tiles/${layer}/${z}/${x}/${y}.png`;
     }
     
-    let url = `${TILES_BASE_URL}/tiles/${layer}/${z}/${x}/${y}.png`;
+    // Use backend API for dynamic tile generation
+    let url = `${BACKEND_API_URL}/api/${layer}-tiles/${z}/${x}/${y}.png`;
     
     // Add query parameters for dynamic layers
     if (params) {
@@ -179,6 +181,131 @@ export class DataClient {
       state: region,
       country: country
     };
+  }
+
+  async getPointAnalytics(lat: number, lon: number, year?: string, month?: string): Promise<{
+    elevation: number | null;
+    seaLevel: number | null;
+    timeSeries: TimeSeries;
+    stats: {
+      mean: number;
+      median: number;
+      min: number;
+      max: number;
+      trend: number;
+      recentChange: number;
+    };
+  }> {
+    if (USE_MOCK_DATA) {
+      // Return mock data
+      const timeSeries = await this.getMockTimeSeries(lat, lon);
+      const values = timeSeries.data.map(d => d.value);
+      const sortedValues = [...values].sort((a, b) => a - b);
+      
+      return {
+        elevation: Math.random() * 10,
+        seaLevel: Math.random() * 100 - 50,
+        timeSeries,
+        stats: {
+          mean: values.reduce((sum, v) => sum + v, 0) / values.length,
+          median: sortedValues[Math.floor(sortedValues.length / 2)],
+          min: Math.min(...values),
+          max: Math.max(...values),
+          trend: 2.1,
+          recentChange: 8.5,
+        },
+      };
+    }
+
+    // Call the backend API
+    const params = new URLSearchParams({
+      lat: lat.toString(),
+      lon: lon.toString(),
+    });
+    
+    if (year) params.append('year', year);
+    if (month) params.append('month', month);
+
+    const response = await fetch(`${BACKEND_API_URL}/api/point-analytics?${params.toString()}`);
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch point analytics: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    
+    return {
+      elevation: data.elevation,
+      seaLevel: data.seaLevel,
+      timeSeries: data.timeSeries,
+      stats: data.stats,
+    };
+  }
+
+  async getElevation(lat: number, lon: number, scale?: number): Promise<number | null> {
+    if (USE_MOCK_DATA) {
+      return Math.random() * 10;
+    }
+
+    const params = new URLSearchParams({
+      lat: lat.toString(),
+      lon: lon.toString(),
+    });
+    
+    if (scale) params.append('scale', scale.toString());
+
+    const response = await fetch(`${BACKEND_API_URL}/api/elevation?${params.toString()}`);
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch elevation: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data.elevation;
+  }
+
+  async getSeaLevel(lat: number, lon: number, year?: string, month?: string): Promise<number | null> {
+    if (USE_MOCK_DATA) {
+      return Math.random() * 100 - 50;
+    }
+
+    const params = new URLSearchParams({
+      lat: lat.toString(),
+      lon: lon.toString(),
+    });
+    
+    if (year) params.append('year', year);
+    if (month) params.append('month', month);
+
+    const response = await fetch(`${BACKEND_API_URL}/api/sea-level?${params.toString()}`);
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch sea level: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data.seaLevel;
+  }
+
+  async getTimeSeries(lat: number, lon: number, month?: string): Promise<TimeSeries> {
+    if (USE_MOCK_DATA) {
+      return this.getMockTimeSeries(lat, lon);
+    }
+
+    const params = new URLSearchParams({
+      lat: lat.toString(),
+      lon: lon.toString(),
+    });
+    
+    if (month) params.append('month', month);
+
+    const response = await fetch(`${BACKEND_API_URL}/api/timeseries?${params.toString()}`);
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch time series: ${response.statusText}`);
+    }
+
+    return response.json();
   }
 }
 
