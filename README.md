@@ -2,7 +2,7 @@
 
 A modern web application for visualizing coastal flood risks, sea level anomalies, and hurricane impacts using real-world data from Climate AI team and Google Earth Engine.
 
-🌐 **Live Demo**: [https://username.github.io/coastal-flood-viewer/](https://username.github.io/coastal-flood-viewer/)
+🌐 **Live Demo**: [https://amnry.github.io/coastal-flood-viewer/](https://amnry.github.io/coastal-flood-viewer/)
 
 ## Features
 
