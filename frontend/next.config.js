@@ -2,6 +2,9 @@
 const nextConfig = {
   output: 'export',
   trailingSlash: true,
+  // Required for GitHub Pages deployment at /coastal-flood-viewer/
+  basePath: process.env.NODE_ENV === 'production' ? '/coastal-flood-viewer' : '',
+  assetPrefix: process.env.NODE_ENV === 'production' ? '/coastal-flood-viewer' : '',
   images: {
     unoptimized: true,
   },
@@ -12,7 +15,7 @@ const nextConfig = {
     NEXT_PUBLIC_USE_MOCK_DATA: process.env.NEXT_PUBLIC_USE_MOCK_DATA,
   },
   // Note: rewrites and headers are not supported with static export
-  // These will be handled by Cloudflare Pages configuration instead
+  // These will be handled by the hosting platform configuration instead
 };
 
 module.exports = nextConfig;

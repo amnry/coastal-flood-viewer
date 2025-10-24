@@ -41,6 +41,7 @@ jobs:
         working-directory: ./frontend
         run: npm run build
         env:
+          NODE_ENV: production
           NEXT_PUBLIC_TILES_BASE_URL: https://storage.googleapis.com/coastal-flood-viewer-tiles
           NEXT_PUBLIC_DATA_CATALOG_URL: https://storage.googleapis.com/coastal-flood-viewer-tiles/catalog/catalog.json
           NEXT_PUBLIC_ELEVATION_ASSET: users/amanaryya1/coastal-dem-files
