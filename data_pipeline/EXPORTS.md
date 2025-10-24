@@ -28,7 +28,7 @@ gs://coastal-flood-viewer-tiles/
 
 **Path:** `gs://coastal-flood-viewer-tiles/tiles/slr/{z}/{x}/{y}.png`
 
-- **Source:** Satellite altimetry data (Jason-1, Jason-2, Jason-3)
+- **Source:** Climate AI team's processed satellite altimetry data (1993-2022)
 - **Processing:** Monthly SLA data processed into web tiles
 - **Format:** PNG tiles in Web Mercator projection
 - **Zoom Levels:** 0-12

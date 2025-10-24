@@ -1,7 +1,7 @@
 # Coastal Flood Viewer - Weekly Progress Report
 
 ## Project Overview
-**Status:** Production-ready web application deployed on Cloudflare  
+**Status:** Production-ready web application deployed on GitHub Pages  
 **Previous:** Streamlit prototype → **Current:** Modern React-based production system
 
 ---
@@ -19,8 +19,8 @@
 
 ### Data Layer (Cloud-Native)
 - **Storage:** Google Cloud Storage (GCS) for tiles and Cloud Optimized GeoTIFFs
-- **CDN:** Cloudflare Pages with global edge caching
-- **API:** Cloudflare Workers for secure GEE proxy (no exposed credentials)
+- **CDN:** GitHub Pages with global CDN
+- **API:** Backend Flask API for secure GEE proxy (no exposed credentials)
 - **Processing:** Python data pipeline with xarray, rasterio, geopandas
 
 ### Modular Design for Future Extension
@@ -57,7 +57,7 @@
 ---
 
 ## Data Sources & Processing
-- **Satellite Data:** Jason-1/2/3 altimetry (1993-2022) processed via Python pipeline
+- **Satellite Data:** Climate AI team's processed altimetry data (1993-2022) via NetCDF files
 - **Elevation Data:** Coastal DEM from Google Earth Engine, tiled for web performance
 - **Storm Data:** IBTrACS hurricane tracks (1851-2023) converted to GeoJSON
 - **Storage:** GCS bucket with public tiles, private raw data, versioned assets
@@ -65,9 +65,9 @@
 ---
 
 ## Next Steps
-- Complete Cloudflare Worker GEE integration
 - Add user authentication for embargoed data access
 - Implement real-time data updates via WebSockets
 - Performance optimization for large dataset visualization
+- Enhance backend API capabilities
 
-**Deployment:** Live on Cloudflare Pages with automatic GitHub integration
+**Deployment:** Live on GitHub Pages with automatic GitHub Actions deployment

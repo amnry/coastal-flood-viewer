@@ -6,22 +6,21 @@ This document describes the data sources, processing, and storage for the Coasta
 
 ### 1. Satellite Altimetry Data
 
-**Source:** NOAA/NASA Satellite Altimetry Missions
-- Jason-1 (2001-2013)
-- Jason-2 (2008-2019)
-- Jason-3 (2016-present)
-
+**Source:** Climate AI team's processed satellite altimetry data
 **Data Type:** Sea Level Anomaly (SLA)
 **Format:** NetCDF (.nc) files
 **Coverage:** Global ocean
 **Resolution:** ~25km spatial, monthly temporal
 **Time Period:** 1993-2022
+**Location:** `data_pipeline/jiayou_sat_data/monthly_raw/`
 
 **Processing:**
-- Raw NetCDF files processed with xarray
-- Monthly SLA data extracted for specific locations
-- Data tiled for web visualization
-- Quality control and validation applied
+- Pre-processed NetCDF files from Climate AI team
+- Monthly SLA data extracted for specific locations using xarray
+- Direct file access for real-time queries
+- Quality control and validation already applied
+- Units converted from meters to millimeters
+- Coordinate conversion (-180/180 to 0/360 format)
 
 ### 2. Coastal Digital Elevation Model
 

@@ -28,7 +28,7 @@ export default function AboutPage() {
                 Data Sources
               </h3>
               <ul className="space-y-2 text-gray-600 dark:text-gray-400">
-                <li>• Satellite altimetry data (Jason-1, Jason-2, Jason-3)</li>
+                <li>• Satellite altimetry data from Climate AI team (1993-2022)</li>
                 <li>• Coastal DEM from Google Earth Engine</li>
                 <li>• IBTrACS hurricane track data</li>
                 <li>• NOAA sea level rise projections</li>
